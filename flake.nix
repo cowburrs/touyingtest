@@ -33,13 +33,15 @@
 
         typixLib = typix.lib.${system};
 
-        src = typixLib.cleanTypstSource ./.;
+        # src = typixLib.cleanTypstSource ./.; # fuck this shit
+        src = ./.;
         commonArgs = {
           typstSource = "main.typ";
 
           fontPaths = [
             # Add paths to fonts here
-            # "${pkgs.roboto}/share/fonts/truetype"
+            "${pkgs.public-sans}/share/fonts/truetype"
+            "${pkgs.liberation_ttf}/share/fonts/truetype"
           ];
 
           virtualPaths = [
@@ -51,12 +53,25 @@
           ];
         };
 
+        unstable_typstPackages = [
+          {
+            name = "touying";
+            version = "0.7.4";
+            hash = "sha256-G7Z+7o6SQjRa63DCLXcSNAtzohrk4Kljk4pSb4rJfeU=";
+          }
+          {
+            name = "uniwarn";
+            version = "0.1.1";
+            hash = "sha256-alpI7IgUJfjxDy6KXlPGX2N9KMEHPms/pbxXHRJrmZw=";
+          }
+        ];
+
         # Compile a Typst project, *without* copying the result
         # to the current directory
         build-drv = typixLib.buildTypstProject (
           commonArgs
           // {
-            inherit src;
+            inherit src unstable_typstPackages;
           }
         );
 
@@ -99,7 +114,16 @@
             # More packages can be added here, like typstfmt
             # pkgs.typstfmt
           ]
-          ++ (with pkgs; [ typstfmt ]);
+          ++ (with pkgs; [
+            typstyle
+            tinymist
+          ]);
+
+          shellHook = ''
+            unset PYTHONPATH
+            export REPO_ROOT=$(git rev-parse --show-toplevel)
+            export PS1="\n\[\033[1;32m\][nix-shell:\w]\$\[\033[0m\] "
+          '';
         };
       }
     );
