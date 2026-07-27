@@ -42,6 +42,8 @@
             # Add paths to fonts here
             "${pkgs.public-sans}/share/fonts/truetype"
             "${pkgs.liberation_ttf}/share/fonts/truetype"
+            "${pkgs.aporetic}/share/fonts/truetype"
+            "${pkgs.inter}/share/fonts/truetype"
           ];
 
           virtualPaths = [
